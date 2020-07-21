@@ -18,6 +18,6 @@ if [ "$_IP" ]; then
 fi
 
 /home/pi/mouse-linux/raspi/server/hid.sh
-nohup /home/pi/mouse-linux/raspi/build/server &
+nohup /home/pi/mouse-linux/raspi/build/server/server &
 
 exit 0
