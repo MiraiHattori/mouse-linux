@@ -44,19 +44,21 @@ sudo /home/pi/mouse-linux/raspi/setup_deps.sh
 raspberrypi0の方
 サーバー側
 ```bash
-sudo /home/pi/mouse-linux/raspi/setup_otg.sh
-sudo /home/pi/mouse-linux/raspi/rc.local.server /etc/rc.local
+sudo /home/pi/mouse-linux/raspi/server/setup_otg.sh
+sudo /home/pi/mouse-linux/raspi/server/rc.local.server /etc/rc.local
 ```
 
 # クライアント設定
 ```bash
 # 99-mouse.rulesをマウスに合わせて編集
-sudo cp /home/pi/mouse-linux/raspi/99-mouse.rules /etc/udev/rules.d
+sudo cp /home/pi/mouse-linux/raspi/client/99-mouse.rules /etc/udev/rules.d
 sudo udevadm control --reload
-sudo /home/pi/mouse-linux/raspi/rc.local.client /etc/rc.local
+sudo /home/pi/mouse-linux/raspi/client/rc.local.client /etc/rc.local
 ```
 
-# サーバー側起動
-sudo /home/pi/mouse-linux/raspi/server
-# クライアント側起動
-sudo /home/pi/mouse-linux/raspi/client
+# サーバー側明示的起動
+sudo pkill server
+sudo /home/pi/mouse-linux/raspi/build/server
+# クライアント側明示的起動
+sudo pkill client
+sudo /home/pi/mouse-linux/raspi/build/client
