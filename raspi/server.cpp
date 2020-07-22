@@ -37,18 +37,24 @@ int main() {
       for (size_t i = 0; i < BUFSIZE; i++) {
         printf("%d ", data[i]);
       }
-      int x = (data[X] > 0 ? data[X] : 256 - data[X]);
-      int y = (data[Y] > 0 ? data[Y] : 256 - data[Y]);
-      int wheel = (data[WHEEL] > 0 ? data[WHEEL] : 256 - data[WHEEL]);
+      int x_l = data[X_L];
+      int x_h = data[X_H];
+      int y_l = data[Y_L];
+      int y_h = data[Y_H];
+      int wheel_l = data[WHEEL_L];
+      int wheel_h = data[WHEEL_H];
       uint8_t b = data[BUTTON];
       writer.clickLeft(((b & (0b1 << 0)) >> 0) == 1);
       writer.clickRight(((b & (0b1 << 1)) >> 1) == 1);
       writer.clickMiddle(((b & (0b1 << 2)) >> 2) == 1);
       writer.clickSide(((b & (0b1 << 3)) >> 3) == 1);
       writer.clickExtra(((b & (0b1 << 4)) >> 4) == 1);
-      writer.x(x);
-      writer.y(y);
-      writer.wheel(wheel);
+      writer.xL(x_l);
+      writer.xH(x_h);
+      writer.yL(y_l);
+      writer.yH(y_h);
+      writer.wheelL(wheel_l);
+      writer.wheelH(wheel_h);
       writer.mywrite();
       writer.clearRelBuf();
       printf("\n");

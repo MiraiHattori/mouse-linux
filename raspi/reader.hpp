@@ -1,20 +1,18 @@
 #pragma once
 #include <algorithm>
-#include <fcntl.h>
-#include <linux/input.h>
 #include <csignal>
 #include <cstdio>
 #include <cstdlib>
+#include <fcntl.h>
+#include <linux/input.h>
 #include <unistd.h>
 
 #include "common.hpp"
 
-class Reader
-{
+class Reader {
 public:
   explicit Reader() = default;
-  static void initialize()
-  {
+  static void initialize() {
     if (signal(SIGINT, sigint_handler) == SIG_ERR) {
       printf("signal\n");
     }
@@ -24,26 +22,21 @@ public:
       exit(0);
     }
   }
-  static void clearBuf()
-  {
-    std::fill(m_buf, m_buf + BUFSIZE, 0);
+  static void clearBuf() { std::fill(m_buf, m_buf + BUFSIZE, 0); }
+
+  static void clearRelBuf() {
+    m_buf[X_L] = 0;
+    m_buf[X_H] = 0;
+    m_buf[Y_L] = 0;
+    m_buf[Y_H] = 0;
+    m_buf[WHEEL_L] = 0;
+    m_buf[WHEEL_H] = 0;
   }
 
-  static void clearRelBuf()
-  {
-    m_buf[X] = 0;
-    m_buf[Y] = 0;
-    m_buf[WHEEL] = 0;
-  }
-
-  static uint8_t* buf()
-  {
-    return m_buf;
-  }
+  static uint8_t *buf() { return m_buf; }
 
   //  if true; ready to send
-  static bool myread()
-  {
+  static bool myread() {
     struct input_event mouse;
     if (read(m_mouse_fd_in, &mouse, sizeof(struct input_event)) < 0) {
       return false;
@@ -57,39 +50,42 @@ public:
           m_buf[BUTTON] &= (0xff - (0b1 << 0));
         } else {
           m_buf[BUTTON] |= (0b1 << 0);
-	}
+        }
       } else if (mouse.code == BTN_RIGHT) {
         if (mouse.value == 0) {
           m_buf[BUTTON] &= (0xff - (0b1 << 1));
         } else {
           m_buf[BUTTON] |= (0b1 << 1);
-	}
+        }
       } else if (mouse.code == BTN_MIDDLE) {
         if (mouse.value == 0) {
           m_buf[BUTTON] &= (0xff - (0b1 << 2));
         } else {
           m_buf[BUTTON] |= (0b1 << 2);
-	}
+        }
       } else if (mouse.code == BTN_SIDE) { // temae
         if (mouse.value == 0) {
           m_buf[BUTTON] &= (0xff - (0b1 << 3));
         } else {
           m_buf[BUTTON] |= (0b1 << 3);
-	}
+        }
       } else if (mouse.code == BTN_EXTRA) { // oku
         if (mouse.value == 0) {
           m_buf[BUTTON] &= (0xff - (0b1 << 4));
         } else {
           m_buf[BUTTON] |= (0b1 << 4);
-	}
+        }
       }
     } else if (mouse.type == EV_REL) {
       if (mouse.code == REL_WHEEL) {
-        m_buf[WHEEL] = mouse.value;
+        m_buf[WHEEL_L] = (mouse.value >> 0) & 0xff;
+        m_buf[WHEEL_H] = (mouse.value >> 8) & 0xff;
       } else if (mouse.code == REL_X) {
-        m_buf[X] = mouse.value;
+        m_buf[X_L] = (mouse.value >> 0) & 0xff;
+        m_buf[X_H] = (mouse.value >> 8) & 0xff;
       } else if (mouse.code == REL_Y) {
-        m_buf[Y] = mouse.value;
+        m_buf[Y_L] = (mouse.value >> 0) & 0xff;
+        m_buf[Y_H] = (mouse.value >> 8) & 0xff;
       }
     } else if (mouse.type == EV_MSC) {
       // left click code 0x90001 / 0d589825
@@ -107,6 +103,7 @@ public:
     exit(0);
   }
   static void finalize() { close(m_mouse_fd_in); }
+
 private:
   static int m_mouse_fd_in;
   static uint8_t m_buf[BUFSIZE];

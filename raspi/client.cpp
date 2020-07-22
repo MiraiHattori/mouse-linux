@@ -25,6 +25,7 @@ int main() {
       const uint8_t *buf = reader.buf();
       boost::system::error_code error;
       asio::write(socket, asio::buffer(buf, BUFSIZE), error);
+      reader.clearRelBuf();
       if (error) {
         std::cout << "send failed: " << error.message() << std::endl;
         break;
