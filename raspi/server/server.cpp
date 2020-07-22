@@ -1,7 +1,10 @@
 #include <boost/asio.hpp>
 #include <chrono>
+#include <fstream>
 #include <iostream>
 #include <mutex>
+#include <sstream>
+#include <string>
 #include <thread>
 
 #include "writer.hpp"
@@ -17,35 +20,26 @@ bool end = false;
 // read only for mutex object except for writer
 static void modifyThread() {
   constexpr size_t MAX_NUM = 135;
-  int modify_xy[MAX_NUM][2] = {
-      { 0, 0, }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
-      { -1, 1, }, { 0, 1 }, { 0, 1 }, { 0, 0 }, { 0, 0 },
-      { 0, 1, }, { 0, 1 }, { 0, 1 }, { 0, 0 }, { 0, 0 },
-      { 1, 1, }, { 1, 1 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
-      { -1, 1, }, { 0, 1 }, { 0, 1 }, { 0, 1 }, { 0, 0 },
-      { -1, 2, }, { -1, 1 }, { 0, 1 }, { 0, 1 }, { 0, 1 },
-      { -1, 2, }, { -1, 2 }, { -1, 2 }, { -1, 1 }, { 0, 1 },
-      { -1, 2, }, { -1, 2 }, { -1, 2 }, { -1, 1 }, { 0, 1 },
-      { -1, 1, }, { -1, 1 }, { 0, 1 }, { 0, 1 }, { 0, 1 },
-      { 1, 1, }, { 0, 1 }, { 0, 1 }, { 0, 1 }, { 0, 1 },
-      { 1, 1, }, { 1, 1 }, { 0, 1 }, { 0, 1 }, { 0, 1 },
-      { 1, 1, }, { 1, 1 }, { 1, 1 }, { 0, 1 }, { 0, 0 },
-      { 1, 1, }, { 0, 1 }, { 0, 1 }, { 0, 1 }, { 0, 0 },
-      { 1, 1, }, { 1, 1 }, { 0, 1 }, { 0, 1 }, { 0, 0 },
-      { -1, 1, }, { 0, 1 }, { 0, 1 }, { 0, 1 }, { 0, 0 },
-      { -1, 1, }, { -1, 1 }, { 0, 1 }, { 0, 1 }, { 0, 0 },
-      { -1, 1, }, { -1, 1 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
-      { -1, 1, }, { -1, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
-      { 1, 1, }, { 1, 0 }, { -1, 0 }, { 0, 0 }, { 0, 0 },
-      { 1, 1, }, { 1, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
-      { 1, 1, }, { 1, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
-      { 1, 1, }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
-      { 1, 1, }, { 1, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
-      { -1, 1, }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
-      { -1, 1, }, { -1, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
-      { -1, 1, }, { -1, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
-      { -1, 1, }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
-  };
+  int modify_xy[MAX_NUM][2];
+  {
+    std::ifstream ifs("/home/pi/mouse-linux/raspi/server/pattern.txt");
+    if (not ifs) {
+      std::cout << "could not open file" << std::endl;
+    }
+    int line = 0;
+    std::string str;
+    while (std::getline(ifs, str)) {
+      std::istringstream iss(str);
+      std::string tmp;
+      std::getline(iss, tmp);
+      int x = std::stoi(tmp);
+      std::getline(iss, tmp);
+      modify_xy[line][0] = x;
+      int y = std::stoi(tmp);
+      modify_xy[line][1] = y;
+      line++;
+    }
+  }
 
   std::chrono::time_point<std::chrono::system_clock> start_t;
   constexpr double interval_ms = 10.0;
@@ -71,10 +65,18 @@ static void modifyThread() {
     }
     {
       std::lock_guard<std::mutex> lock(mtx);
-      int x_l = (modify_xy[cnt][0] > 0) ? ((modify_xy[cnt][0] >> 0) & 0xff) : (((65536 - modify_xy[cnt][0]) >> 0) & 0xff);
-      int x_h = (modify_xy[cnt][0] > 0) ? ((modify_xy[cnt][0] >> 8) & 0xff) : (((65536 - modify_xy[cnt][0]) >> 8) & 0xff);
-      int y_l = (modify_xy[cnt][1] > 0) ? ((modify_xy[cnt][1] >> 0) & 0xff) : (((65536 - modify_xy[cnt][1]) >> 0) & 0xff);
-      int y_h = (modify_xy[cnt][1] > 0) ? ((modify_xy[cnt][1] >> 8) & 0xff) : (((65536 - modify_xy[cnt][1]) >> 8) & 0xff);
+      int x_l = (modify_xy[cnt][0] > 0)
+                    ? ((modify_xy[cnt][0] >> 0) & 0xff)
+                    : (((65536 - modify_xy[cnt][0]) >> 0) & 0xff);
+      int x_h = (modify_xy[cnt][0] > 0)
+                    ? ((modify_xy[cnt][0] >> 8) & 0xff)
+                    : (((65536 - modify_xy[cnt][0]) >> 8) & 0xff);
+      int y_l = (modify_xy[cnt][1] > 0)
+                    ? ((modify_xy[cnt][1] >> 0) & 0xff)
+                    : (((65536 - modify_xy[cnt][1]) >> 0) & 0xff);
+      int y_h = (modify_xy[cnt][1] > 0)
+                    ? ((modify_xy[cnt][1] >> 8) & 0xff)
+                    : (((65536 - modify_xy[cnt][1]) >> 8) & 0xff);
       writer.xL(x_l);
       writer.xH(x_h);
       writer.yL(y_l);
