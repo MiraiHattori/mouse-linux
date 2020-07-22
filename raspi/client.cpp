@@ -10,11 +10,22 @@ int main() {
   asio::io_service io_service;
   tcp::resolver resolver(io_service);
   tcp::resolver::query query("raspberrypi0.local", "31400");
-  tcp::resolver::iterator iterator = resolver.resolve(query);
+  tcp::resolver::iterator iterator;
+ON_ERROR:
+  try {
+    iterator = resolver.resolve(query);
+  } catch (const boost::exception &e) {
+    goto ON_ERROR;
+  }
 
   // 接続
   tcp::socket socket(io_service);
-  socket.connect(iterator->endpoint());
+ON_CONNECT:
+  try {
+    socket.connect(iterator->endpoint());
+  } catch (const boost::exception &e) {
+    goto ON_CONNECT;
+  }
 
   Reader reader{};
   reader.initialize();
