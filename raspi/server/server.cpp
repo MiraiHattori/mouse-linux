@@ -66,11 +66,11 @@ static void modifyThread() {
     {
       std::lock_guard<std::mutex> lock(mtx);
       int x = modify_xy[cnt][0];
-      int x_l = (x > 0) ? (x >> 0 & 0xff) : (((65536 - x) >> 0) & 0xff);
-      int x_h = (x > 0) ? (x >> 8 & 0xff) : (((65536 - x) >> 8) & 0xff);
+      int x_l = (x > 0) ? (x >> 0 & 0xff) : (((65536 + x) >> 0) & 0xff);
+      int x_h = (x > 0) ? (x >> 8 & 0xff) : (((65536 + x) >> 8) & 0xff);
       int y = modify_xy[cnt][1];
-      int y_l = (y > 0) ? (y >> 0 & 0xff) : (((65536 - y) >> 0) & 0xff);
-      int y_h = (y > 0) ? (y >> 8 & 0xff) : (((65536 - y) >> 8) & 0xff);
+      int y_l = (y > 0) ? (y >> 0 & 0xff) : (((65536 + y) >> 0) & 0xff);
+      int y_h = (y > 0) ? (y >> 8 & 0xff) : (((65536 + y) >> 8) & 0xff);
       writer.xL(x_l);
       writer.xH(x_h);
       writer.yL(y_l);
