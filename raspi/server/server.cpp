@@ -31,10 +31,10 @@ static void modifyThread() {
     while (std::getline(ifs, str)) {
       std::istringstream iss(str);
       std::string tmp;
-      std::getline(iss, tmp);
+      std::getline(iss, tmp, ',');
       int x = std::stoi(tmp);
-      std::getline(iss, tmp);
       modify_xy[line][0] = x;
+      std::getline(iss, tmp, ',');
       int y = std::stoi(tmp);
       modify_xy[line][1] = y;
       line++;
