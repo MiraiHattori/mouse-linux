@@ -1,43 +1,61 @@
 # raspi zero wh2台
-
 ホスト名は
 サーバー: raspberrypi0, PCと接続
 クライアント: raspberrypi1, マウスと接続
 
-sshのconfigに，それぞれraspiwh0，raspiwh1として登録してある前提
 
-# 共通設定
-SDカードにOSをインストール
-
+# ホスト側作業
+```bash
+git clone https://github.com/future731/mouse-linux
+```
+2枚のSDカードにOSをインストール
+~/.ssh/configにssh_configの中身を登録
+それぞれraspiwh0，raspiwh1として登録してある
 /mediaにマウントされたやつの/boot/に
+```bash
 sudo touch /boot/ssh
-sudo vi /rootfs/etc/wpa_supplicant/wpa_suplicant.confしてwifi設定
-sudo vi /etc/hostsしてraspberrypiNとする
-sudo vi /etc/hostnameしてraspberrypiNとする
-起動して，ssh pi@raspberrypiN．初期パスはraspberryなのでpasswdする
-setup_ssh.shをscpしておいて
-sudo ./setup_ssh.sh
+sudo vi /rootfs/etc/wpa_supplicant/wpa_suplicant.conf # wifi設定
+```
+N=0,1として
+```bash
+sudo vi /etc/hosts
+sudo vi /etc/hostname
+```
+してraspberrypiNとする
+起動して，
+```bash
+ssh raspiwhN
+passwd # 初期パスはraspberryなのでpasswdする
+```
 
-# サーバー設定
-raspberrypi0の方
-サーバー側
-setup_otg.shとhid.shをscpしておいて
-sudo ./setup_otg.sh
-/etc/rc.localのexit 0の前に/home/pi/hid.shを書いておく
-
-# クライアント設定
-99-mouse.rulesを/etc/udev/rules.dにおく
-sudo udevadm control --reload
-
-# 共通設定
+# サーバー，クライアント共通設定
+```bash
 git clone https://github.com/future731/mouse-linux
 cd mouse-linux/raspi
 mkdir build
 cd build
 cmake ..
 make
+sudo /home/pi/mouse-linux/raspi/setup_ssh.sh
+sudo /home/pi/mouse-linux/raspi/setup_deps.sh
+```
+
+# サーバー設定
+raspberrypi0の方
+サーバー側
+```bash
+sudo /home/pi/mouse-linux/raspi/setup_otg.sh
+```
+/etc/rc.localのexit 0の前に/home/pi/mouse-linux/raspi/hid.shを書いておく
+
+# クライアント設定
+```bash
+# 99-mouse.rulesをマウスに合わせて編集
+sudo cp /home/pi/mouse-linux/raspi/99-mouse.rules /etc/udev/rules.d
+sudo udevadm control --reload
+```
 
 # サーバー側起動
-sudo ./server
+sudo /home/pi/mouse-linux/raspi/server
 # クライアント側起動
-sudo ./client
+sudo /home/pi/mouse-linux/raspi/client

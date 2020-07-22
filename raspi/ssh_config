@@ -1,0 +1,8 @@
+Host raspiwh0
+    HostName raspberrypi0.local
+    User pi
+
+Host raspiwh1
+    HostName raspberrypi1.local
+    User pi
+
