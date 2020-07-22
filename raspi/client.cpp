@@ -31,7 +31,7 @@ int main() {
         break;
       } else {
         for (size_t i = 0; i < BUFSIZE; i++) {
-          printf("%d \n", buf[i]);
+          printf("%d ", buf[i]);
         }
         printf("\n");
       }
