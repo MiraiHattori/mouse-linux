@@ -45,8 +45,8 @@ raspberrypi0の方
 サーバー側
 ```bash
 sudo /home/pi/mouse-linux/raspi/setup_otg.sh
+sudo /home/pi/mouse-linux/raspi/rc.local /etc/rc.local
 ```
-/etc/rc.localのexit 0の前に/home/pi/mouse-linux/raspi/hid.shを書いておく
 
 # クライアント設定
 ```bash
