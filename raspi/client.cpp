@@ -30,7 +30,10 @@ int main() {
         std::cout << "send failed: " << error.message() << std::endl;
         break;
       } else {
-        std::cout << "send correct!" << std::endl;
+        for (size_t i = 0; i < BUFSIZE; i++) {
+          printf("%d \n", buf[i]);
+        }
+        printf("\n");
       }
     }
   }
