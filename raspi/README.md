@@ -45,7 +45,7 @@ raspberrypi0の方
 サーバー側
 ```bash
 sudo /home/pi/mouse-linux/raspi/setup_otg.sh
-sudo /home/pi/mouse-linux/raspi/rc.local /etc/rc.local
+sudo /home/pi/mouse-linux/raspi/rc.local.server /etc/rc.local
 ```
 
 # クライアント設定
@@ -53,6 +53,7 @@ sudo /home/pi/mouse-linux/raspi/rc.local /etc/rc.local
 # 99-mouse.rulesをマウスに合わせて編集
 sudo cp /home/pi/mouse-linux/raspi/99-mouse.rules /etc/udev/rules.d
 sudo udevadm control --reload
+sudo /home/pi/mouse-linux/raspi/rc.local.client /etc/rc.local
 ```
 
 # サーバー側起動

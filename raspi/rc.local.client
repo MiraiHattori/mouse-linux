@@ -17,7 +17,6 @@ if [ "$_IP" ]; then
   printf "My IP address is %s\n" "$_IP"
 fi
 
-/home/pi/hid.sh
-/home/pi/setup_ssh.sh
+nohup /home/pi/mouse-linux/raspi/build/client &
 
 exit 0
