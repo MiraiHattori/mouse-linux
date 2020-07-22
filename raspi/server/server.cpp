@@ -16,23 +16,39 @@ bool end = false;
 
 // read only for mutex object except for writer
 static void modifyThread() {
-  constexpr size_t MAX_NUM = 100;
-  int modify_x[MAX_NUM] = {
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0,
+  constexpr size_t MAX_NUM = 135;
+  int modify_xy[MAX_NUM][2] = {
+      { 0, 0, }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
+      { -1, 1, }, { 0, 1 }, { 0, 1 }, { 0, 0 }, { 0, 0 },
+      { 0, 1, }, { 0, 1 }, { 0, 1 }, { 0, 0 }, { 0, 0 },
+      { 1, 1, }, { 1, 1 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
+      { -1, 1, }, { 0, 1 }, { 0, 1 }, { 0, 1 }, { 0, 0 },
+      { -1, 2, }, { -1, 1 }, { 0, 1 }, { 0, 1 }, { 0, 1 },
+      { -1, 2, }, { -1, 2 }, { -1, 2 }, { -1, 1 }, { 0, 1 },
+      { -1, 2, }, { -1, 2 }, { -1, 2 }, { -1, 1 }, { 0, 1 },
+      { -1, 1, }, { -1, 1 }, { 0, 1 }, { 0, 1 }, { 0, 1 },
+      { 1, 1, }, { 0, 1 }, { 0, 1 }, { 0, 1 }, { 0, 1 },
+      { 1, 1, }, { 1, 1 }, { 0, 1 }, { 0, 1 }, { 0, 1 },
+      { 1, 1, }, { 1, 1 }, { 1, 1 }, { 0, 1 }, { 0, 0 },
+      { 1, 1, }, { 0, 1 }, { 0, 1 }, { 0, 1 }, { 0, 0 },
+      { 1, 1, }, { 1, 1 }, { 0, 1 }, { 0, 1 }, { 0, 0 },
+      { -1, 1, }, { 0, 1 }, { 0, 1 }, { 0, 1 }, { 0, 0 },
+      { -1, 1, }, { -1, 1 }, { 0, 1 }, { 0, 1 }, { 0, 0 },
+      { -1, 1, }, { -1, 1 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
+      { -1, 1, }, { -1, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
+      { 1, 1, }, { 1, 0 }, { -1, 0 }, { 0, 0 }, { 0, 0 },
+      { 1, 1, }, { 1, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
+      { 1, 1, }, { 1, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
+      { 1, 1, }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
+      { 1, 1, }, { 1, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
+      { -1, 1, }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
+      { -1, 1, }, { -1, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
+      { -1, 1, }, { -1, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
+      { -1, 1, }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
   };
-  int modify_y[MAX_NUM] = {
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0,
-  };
+
   std::chrono::time_point<std::chrono::system_clock> start_t;
-  constexpr double interval_ms = 30.0;
+  constexpr double interval_ms = 10.0;
   bool last_clicked = false;
   int cnt = 0;
   while (not end) {
@@ -47,20 +63,27 @@ static void modifyThread() {
       start_t = std::chrono::system_clock::now();
       cnt = 0;
     }
+    if (cnt == MAX_NUM - 1) {
+      std::this_thread::sleep_for(
+          std::chrono::milliseconds(static_cast<int>(interval_ms)));
+      last_clicked = c;
+      continue;
+    }
     {
       std::lock_guard<std::mutex> lock(mtx);
-      writer.xL(modify_x[cnt]);
-      writer.xH(0);
-      writer.yL(modify_y[cnt]);
-      writer.yH(0);
+      int x_l = (modify_xy[cnt][0] > 0) ? ((modify_xy[cnt][0] >> 0) & 0xff) : (((65536 - modify_xy[cnt][0]) >> 0) & 0xff);
+      int x_h = (modify_xy[cnt][0] > 0) ? ((modify_xy[cnt][0] >> 8) & 0xff) : (((65536 - modify_xy[cnt][0]) >> 8) & 0xff);
+      int y_l = (modify_xy[cnt][1] > 0) ? ((modify_xy[cnt][1] >> 0) & 0xff) : (((65536 - modify_xy[cnt][1]) >> 0) & 0xff);
+      int y_h = (modify_xy[cnt][1] > 0) ? ((modify_xy[cnt][1] >> 8) & 0xff) : (((65536 - modify_xy[cnt][1]) >> 8) & 0xff);
+      writer.xL(x_l);
+      writer.xH(x_h);
+      writer.yL(y_l);
+      writer.yH(y_h);
       writer.mywrite();
       writer.clearRelBuf();
     }
     cnt++;
     // stay in the last modif
-    if (cnt == MAX_NUM) {
-      cnt--;
-    }
     auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
                            std::chrono::system_clock::now() - start_t)
                            .count();
@@ -113,6 +136,7 @@ int main() {
       uint8_t b = data[BUTTON];
       {
         std::lock_guard<std::mutex> lock(mtx);
+        clicked = (((b & (0b1 << 0)) >> 0) == 1);
         writer.clickLeft(((b & (0b1 << 0)) >> 0) == 1);
         writer.clickRight(((b & (0b1 << 1)) >> 1) == 1);
         writer.clickMiddle(((b & (0b1 << 2)) >> 2) == 1);
