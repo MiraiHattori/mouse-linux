@@ -30,9 +30,14 @@ sudo ./setup_otg.sh
 sudo udevadm control --reload
 
 # 共通設定
-mouse-linux/raspiを両方でclone? scp?
+git clone https://github.com/future731/mouse-linux
+cd mouse-linux/raspi
+mkdir build
+cd build
+cmake ..
+make
 
 # サーバー側起動
-mouse-linux/raspi/build/serverをsudoで起動
+sudo ./server
 # クライアント側起動
-mouse-linux/raspi/build/clientをsudoで起動
+sudo ./client
