@@ -42,14 +42,14 @@ static void modifyThread() {
   }
 
   std::chrono::time_point<std::chrono::system_clock> start_t;
-  constexpr double interval_ms = 10.0;
+  constexpr double interval_us = 9600;
   bool last_clicked = false;
   int cnt = 0;
   while (not end) {
     bool c = clicked;
     if (not c) {
       std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<int>(interval_ms)));
+          std::chrono::microseconds(static_cast<int>(interval_us)));
       last_clicked = c;
       continue;
     }
@@ -59,7 +59,7 @@ static void modifyThread() {
     }
     if (cnt == MAX_NUM - 1) {
       std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<int>(interval_ms)));
+          std::chrono::microseconds(static_cast<int>(interval_us)));
       last_clicked = c;
       continue;
     }
@@ -80,12 +80,12 @@ static void modifyThread() {
     }
     cnt++;
     // stay in the last modif
-    auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+    auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(
                            std::chrono::system_clock::now() - start_t)
                            .count();
-    int sleep_ms = static_cast<int>(cnt * interval_ms - duration_ms);
-    if (sleep_ms > 0) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
+    int sleep_us = static_cast<int>(cnt * interval_us - duration_us);
+    if (sleep_us > 0) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(sleep_us));
     }
     last_clicked = c;
   }
