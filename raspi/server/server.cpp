@@ -85,7 +85,7 @@ static void modifyThread() {
                            .count();
     int sleep_us = static_cast<int>(cnt * interval_us - duration_us);
     if (sleep_us > 0) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(sleep_us));
+      std::this_thread::sleep_for(std::chrono::microseconds(sleep_us));
     }
     last_clicked = c;
   }
