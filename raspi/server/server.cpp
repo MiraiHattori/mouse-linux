@@ -19,7 +19,7 @@ bool end = false;
 
 // read only for mutex object except for writer
 static void modifyThread() {
-  constexpr size_t MAX_NUM = 135;
+  constexpr size_t MAX_NUM = (27 - 1) * 5;
   int modify_xy[MAX_NUM][2];
   {
     std::ifstream ifs("/home/pi/mouse-linux/raspi/server/pattern.txt");
@@ -42,7 +42,7 @@ static void modifyThread() {
   }
 
   std::chrono::time_point<std::chrono::system_clock> start_t;
-  constexpr double interval_us = 9600;
+  constexpr double interval_us = 1000000.0 / 18.0 / 5.0;
   bool last_clicked = false;
   int cnt = 0;
   while (not end) {
