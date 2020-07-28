@@ -11,6 +11,7 @@ using asio::ip::tcp;
 int main() {
   std::shared_ptr<Communicator> communicator =
       std::make_shared<WifiCommunicator>();
+  communicator->connect();
 
   MouseReader mouse_reader{};
   mouse_reader.initialize();
