@@ -72,10 +72,16 @@ public:
   }
   void disconnect() override { m_serial.close(); }
   uint8_t *read(size_t bufsize) override {
-    size_t read_size = m_serial.read_some(asio::buffer(m_buf, bufsize));
+    boost::system::error_code ec;
+    size_t read_size = m_serial.read_some(asio::buffer(m_buf, bufsize), ec);
     if (read_size != bufsize) {
       std::cerr << "read failed: read_size: " << read_size << " bytes"
                 << std::endl;
+    }
+    if (ec && ec != asio::error::eof) {
+      std::cerr << "read failed: " << ec.message() << std::endl;
+      std::fill(m_buf, m_buf + bufsize, 0);
+      return m_buf;
     }
     return m_buf;
   }
