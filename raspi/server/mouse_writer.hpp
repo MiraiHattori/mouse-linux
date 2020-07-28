@@ -40,6 +40,11 @@ public:
     if (rest != 0) {
       fprintf(stderr, "can't write: write_size: %ld\n", BUFSIZE - rest);
       return;
+    } else {
+      for (size_t i = 0; i < BUFSIZE; i++) {
+        printf("%d ", m_buf[i]);
+      }
+      printf("\n");
     }
   }
   void clearBuf() { std::fill(m_buf, m_buf + BUFSIZE, 0); }
