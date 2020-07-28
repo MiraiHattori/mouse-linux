@@ -7,17 +7,17 @@
 #include <string>
 #include <thread>
 
-#include "writer.hpp"
+#include "mouse_writer.hpp"
 
 namespace asio = boost::asio;
 using asio::ip::tcp;
 
 std::mutex mtx;
-Writer writer{};
+MouseWriter mouse_writer{};
 bool clicked = false;
 bool end = false;
 
-// read only for mutex object except for writer
+// read only for mutex object except for mouse_writer
 static void modifyThread() {
   constexpr size_t MAX_NUM = (27 - 1) * 5;
   int modify_xy[MAX_NUM][2];
@@ -71,12 +71,12 @@ static void modifyThread() {
       int y = modify_xy[cnt][1];
       int y_l = (y > 0) ? (y >> 0 & 0xff) : (((65536 + y) >> 0) & 0xff);
       int y_h = (y > 0) ? (y >> 8 & 0xff) : (((65536 + y) >> 8) & 0xff);
-      writer.xL(x_l);
-      writer.xH(x_h);
-      writer.yL(y_l);
-      writer.yH(y_h);
-      writer.mywrite();
-      writer.clearRelBuf();
+      mouse_writer.xL(x_l);
+      mouse_writer.xH(x_h);
+      mouse_writer.yL(y_l);
+      mouse_writer.yH(y_h);
+      mouse_writer.mywrite();
+      mouse_writer.clearRelBuf();
     }
     cnt++;
     // stay in the last modif
@@ -97,8 +97,8 @@ int main() {
   tcp::acceptor acc(io_service, tcp::endpoint(tcp::v4(), 31400));
   tcp::socket socket(io_service);
 
-  writer.initialize();
-  writer.clearBuf();
+  mouse_writer.initialize();
+  mouse_writer.clearBuf();
   std::thread modify_thread(modifyThread);
   modify_thread.detach();
 
@@ -133,19 +133,19 @@ int main() {
       {
         std::lock_guard<std::mutex> lock(mtx);
         clicked = (((b & (0b1 << 0)) >> 0) == 1);
-        writer.clickLeft(((b & (0b1 << 0)) >> 0) == 1);
-        writer.clickRight(((b & (0b1 << 1)) >> 1) == 1);
-        writer.clickMiddle(((b & (0b1 << 2)) >> 2) == 1);
-        writer.clickSide(((b & (0b1 << 3)) >> 3) == 1);
-        writer.clickExtra(((b & (0b1 << 4)) >> 4) == 1);
-        writer.xL(x_l);
-        writer.xH(x_h);
-        writer.yL(y_l);
-        writer.yH(y_h);
-        writer.wheelL(wheel_l);
-        writer.wheelH(wheel_h);
-        writer.mywrite();
-        writer.clearRelBuf();
+        mouse_writer.clickLeft(((b & (0b1 << 0)) >> 0) == 1);
+        mouse_writer.clickRight(((b & (0b1 << 1)) >> 1) == 1);
+        mouse_writer.clickMiddle(((b & (0b1 << 2)) >> 2) == 1);
+        mouse_writer.clickSide(((b & (0b1 << 3)) >> 3) == 1);
+        mouse_writer.clickExtra(((b & (0b1 << 4)) >> 4) == 1);
+        mouse_writer.xL(x_l);
+        mouse_writer.xH(x_h);
+        mouse_writer.yL(y_l);
+        mouse_writer.yH(y_h);
+        mouse_writer.wheelL(wheel_l);
+        mouse_writer.wheelH(wheel_h);
+        mouse_writer.mywrite();
+        mouse_writer.clearRelBuf();
       }
       printf("\n");
     }

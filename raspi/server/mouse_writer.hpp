@@ -10,9 +10,9 @@
 
 #include "common.hpp"
 
-class Writer {
+class MouseWriter {
 public:
-  explicit Writer() = default;
+  explicit MouseWriter() = default;
   static void initialize() {
     if (signal(SIGINT, sigint_handler) == SIG_ERR) {
       printf("signal\n");
