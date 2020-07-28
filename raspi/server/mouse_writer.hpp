@@ -37,7 +37,7 @@ public:
       int write_size = write(m_mouse_fd_out, m_buf + BUFSIZE - rest, rest);
       rest -= write_size;
     }
-    if (rest < 0) {
+    if (rest != 0) {
       fprintf(stderr, "can't write: write_size: %ld\n", BUFSIZE - rest);
       return;
     }
