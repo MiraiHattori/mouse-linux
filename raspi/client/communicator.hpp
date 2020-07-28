@@ -43,7 +43,7 @@ public:
       std::cerr << "send failed: " << ec.message() << std::endl;
     } else {
       for (size_t i = 0; i < bufsize; i++) {
-        std::cout << buf[i] << " ";
+        std::cout << +buf[i] << " ";
       }
       std::cout << std::endl;
     }
