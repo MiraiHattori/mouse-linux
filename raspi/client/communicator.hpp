@@ -73,9 +73,18 @@ public:
   }
   void disconnect() override { m_serial.close(); }
   void write(const uint8_t *buf, size_t bufsize) override {
-    size_t sent_size = m_serial.write_some(asio::buffer(buf, bufsize));
+    boost::system::error_code ec;
+    size_t sent_size = m_serial.write_some(asio::buffer(buf, bufsize), ec);
     if (sent_size != bufsize) {
       std::cerr << "write failed: sent " << sent_size << " bytes" << std::endl;
+    }
+    if (ec) {
+      std::cerr << "send failed: " << ec.message() << std::endl;
+    } else {
+      for (size_t i = 0; i < bufsize; i++) {
+        std::cout << +buf[i] << " ";
+      }
+      std::cout << std::endl;
     }
   }
 
