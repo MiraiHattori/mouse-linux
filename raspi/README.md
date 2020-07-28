@@ -1,3 +1,6 @@
+差別やジェンダーへの配慮が必要であることは理解した上で，
+技術的観点から記述時点での通称でドキュメントを記述することとする
+
 # raspi zero wh2台
 ホスト名は
 サーバー: raspberrypi0, PCと接続
@@ -49,6 +52,8 @@ sudo /home/pi/mouse-linux/raspi/server/setup_otg.sh
 sudo /home/pi/mouse-linux/raspi/server/rc.local.server /etc/rc.local
 ```
 
+
+
 # クライアント設定
 ```bash
 # 99-mouse.rulesをマウスに合わせて編集
@@ -56,6 +61,11 @@ sudo cp /home/pi/mouse-linux/raspi/client/99-mouse.rules /etc/udev/rules.d
 sudo udevadm control --reload
 sudo /home/pi/mouse-linux/raspi/client/rc.local.client /etc/rc.local
 ```
+
+# UART接続 (Wi-Fi不使用の場合)
+サーバー側UART_TX <-> クライアント側UART_RX
+サーバー側UART_RX <-> クライアント側UART_TX
+のピンヘッダをメスメスコネクタで物理接続
 
 # サーバー側明示的起動
 sudo pkill server

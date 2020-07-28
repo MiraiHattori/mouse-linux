@@ -9,9 +9,9 @@
 
 #include "common.hpp"
 
-class Reader {
+class MouseReader {
 public:
-  explicit Reader() = default;
+  explicit MouseReader() = default;
   static void initialize() {
     if (signal(SIGINT, sigint_handler) == SIG_ERR) {
       printf("signal\n");

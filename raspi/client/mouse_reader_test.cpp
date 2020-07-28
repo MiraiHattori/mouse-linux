@@ -1,11 +1,11 @@
-#include "reader.hpp"
+#include "mouse_reader.hpp"
 
 int main() {
-  Reader reader{};
-  reader.initialize();
+  MouseReader mouse_reader{};
+  mouse_reader.initialize();
   while (true) {
-    if (reader.myread()) {
-      uint8_t *buf = reader.buf();
+    if (mouse_reader.myread()) {
+      uint8_t *buf = mouse_reader.buf();
       for (size_t i = 0; i < BUFSIZE; i++) {
         printf("%d", buf[i]);
         if (i != BUFSIZE - 1) {
@@ -13,7 +13,7 @@ int main() {
         }
       }
       printf("\n");
-      reader.clearRelBuf();
+      mouse_reader.clearRelBuf();
     }
   }
   return 0;
