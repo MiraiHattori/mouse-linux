@@ -38,6 +38,7 @@ cmake ..
 make
 sudo /home/pi/mouse-linux/raspi/setup_ssh.sh
 sudo /home/pi/mouse-linux/raspi/setup_deps.sh
+sudo /home/pi/mouse-linux/raspi/setup_serial.sh
 ```
 
 # サーバー設定
