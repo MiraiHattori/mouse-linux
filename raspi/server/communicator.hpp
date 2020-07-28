@@ -53,3 +53,34 @@ private:
   asio::io_service m_io_service;
   tcp::socket m_socket;
 };
+
+class UartCommunicator : public Communicator {
+public:
+  explicit UartCommunicator()
+      : Communicator(),
+        m_serial(asio::serial_port(m_io_service, "/dev/ttyAMA0")) {}
+  void connect() override {
+    m_serial.set_option(asio::serial_port_base::baud_rate(115200));
+    m_serial.set_option(asio::serial_port_base::character_size(8));
+    m_serial.set_option(asio::serial_port_base::flow_control(
+        asio::serial_port_base::flow_control::none));
+    m_serial.set_option(
+        asio::serial_port_base::parity(asio::serial_port_base::parity::none));
+    m_serial.set_option(asio::serial_port_base::stop_bits(
+        asio::serial_port_base::stop_bits::one));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
+  void disconnect() override { m_serial.close(); }
+  uint8_t *read(size_t bufsize) override {
+    size_t read_size = m_serial.read_some(asio::buffer(m_buf, bufsize));
+    if (read_size != bufsize) {
+      std::cerr << "read failed: read_size: " << read_size << " bytes"
+                << std::endl;
+    }
+    return m_buf;
+  }
+
+private:
+  asio::io_service m_io_service;
+  asio::serial_port m_serial;
+};

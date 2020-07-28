@@ -35,6 +35,7 @@ public:
       goto ON_CONNECT;
     }
   }
+  void disconnect() override {}
 
   void write(const uint8_t *buf, size_t bufsize) override {
     boost::system::error_code ec;
@@ -48,9 +49,37 @@ public:
       std::cout << std::endl;
     }
   }
-  void disconnect() override {}
 
 private:
   asio::io_service m_io_service;
   tcp::socket m_socket;
+};
+
+class UartCommunicator : public Communicator {
+public:
+  explicit UartCommunicator()
+      : Communicator(),
+        m_serial(asio::serial_port(m_io_service, "/dev/ttyAMA0")) {}
+  void connect() override {
+    m_serial.set_option(asio::serial_port_base::baud_rate(115200));
+    m_serial.set_option(asio::serial_port_base::character_size(8));
+    m_serial.set_option(asio::serial_port_base::flow_control(
+        asio::serial_port_base::flow_control::none));
+    m_serial.set_option(
+        asio::serial_port_base::parity(asio::serial_port_base::parity::none));
+    m_serial.set_option(asio::serial_port_base::stop_bits(
+        asio::serial_port_base::stop_bits::one));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
+  void disconnect() override { m_serial.close(); }
+  void write(const uint8_t *buf, size_t bufsize) override {
+    size_t sent_size = m_serial.write_some(asio::buffer(buf, bufsize));
+    if (sent_size != bufsize) {
+      std::cerr << "write failed: sent " << sent_size << " bytes" << std::endl;
+    }
+  }
+
+private:
+  asio::io_service m_io_service;
+  asio::serial_port m_serial;
 };

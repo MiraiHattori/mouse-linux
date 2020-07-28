@@ -94,7 +94,8 @@ static void modifyThread() {
 
 int main() {
   std::shared_ptr<Communicator> communicator =
-      std::make_shared<WifiCommunicator>();
+      // std::make_shared<WifiCommunicator>();
+      std::make_shared<UartCommunicator>();
   communicator->connect();
   mouse_writer.initialize();
   mouse_writer.clearBuf();
