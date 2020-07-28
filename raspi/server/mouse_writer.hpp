@@ -32,18 +32,14 @@ public:
   static void finalize() { close(m_mouse_fd_out); }
 
   void mywrite() {
-    for (size_t i = 0; i < LOOP_NUM; i++) {
-      int size;
-      if (i != LOOP_NUM - 1) {
-        size = write(m_mouse_fd_out, m_buf + i * BLOCKSIZE, BLOCKSIZE);
-      } else {
-        size = write(m_mouse_fd_out, m_buf + i * BLOCKSIZE,
-                     BUFSIZE - BLOCKSIZE * i);
-      }
-      if (size < 0) {
-        fprintf(stderr, "can't write\n");
-        return;
-      }
+    int rest = BUFSIZE;
+    while (rest > 0) {
+      int write_size = write(m_mouse_fd_out, m_buf + BUFSIZE - rest, rest);
+      rest -= write_size;
+    }
+    if (rest < 0) {
+      fprintf(stderr, "can't write: write_size: %ld\n", BUFSIZE - rest);
+      return;
     }
   }
   void clearBuf() { std::fill(m_buf, m_buf + BUFSIZE, 0); }
