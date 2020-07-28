@@ -33,6 +33,7 @@ public:
     if (asio::read(m_socket, receive_buffer, asio::transfer_exactly(bufsize),
                    ec) == 0) {
       std::cerr << "connection lost: " << ec.message() << std::endl;
+      std::this_thread::sleep_for(std::chrono::seconds(1));
       std::fill(m_buf, m_buf + bufsize, 0);
       return m_buf;
     }
