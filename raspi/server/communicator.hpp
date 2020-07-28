@@ -75,8 +75,10 @@ public:
     boost::system::error_code ec;
     size_t rest = bufsize;
     while (rest > 0) {
-      size_t read_size = m_serial.read_some(asio::buffer(m_buf, bufsize), ec);
+      size_t read_size =
+          m_serial.read_some(asio::buffer(m_buf + bufsize - rest, bufsize), ec);
       rest -= read_size;
+      std::cout << "[UartCommunicator] ";
       for (size_t i = 0; i < read_size; i++) {
         std::cout << +m_buf[i] << " ";
       }

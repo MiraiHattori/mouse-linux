@@ -81,6 +81,7 @@ public:
     if (ec) {
       std::cerr << "send failed: " << ec.message() << std::endl;
     } else {
+      std::cout << "[UartCommunicator] ";
       for (size_t i = 0; i < bufsize; i++) {
         std::cout << +buf[i] << " ";
       }
