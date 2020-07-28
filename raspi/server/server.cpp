@@ -129,7 +129,6 @@ int main() {
       mouse_writer.mywrite();
       mouse_writer.clearRelBuf();
     }
-    printf("\n");
   }
   end = true;
   return 0;
