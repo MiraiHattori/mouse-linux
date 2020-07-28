@@ -7,6 +7,7 @@
 #include <string>
 #include <thread>
 
+#include "communicator.hpp"
 #include "mouse_writer.hpp"
 
 namespace asio = boost::asio;
@@ -92,63 +93,45 @@ static void modifyThread() {
 }
 
 int main() {
-  asio::io_service io_service;
-
-  tcp::acceptor acc(io_service, tcp::endpoint(tcp::v4(), 31400));
-  tcp::socket socket(io_service);
-
+  std::shared_ptr<Communicator> communicator =
+      std::make_shared<WifiCommunicator>();
+  communicator->connect();
   mouse_writer.initialize();
   mouse_writer.clearBuf();
   std::thread modify_thread(modifyThread);
   modify_thread.detach();
 
-  // 接続待機
-  acc.accept(socket);
-
   while (true) {
     // メッセージ受信
-    asio::streambuf receive_buffer;
-    boost::system::error_code error;
-    if (asio::read(socket, receive_buffer, asio::transfer_exactly(BUFSIZE),
-                   error) == 0) {
-      std::cout << "connection lost: " << error.message() << std::endl;
-      break;
+    uint8_t *data = communicator->read(BUFSIZE);
+    for (size_t i = 0; i < BUFSIZE; i++) {
+      printf("%d ", data[i]);
     }
-    if (error && error != asio::error::eof) {
-      std::cout << "receive failed: " << error.message() << std::endl;
-      break;
-    } else {
-      const uint8_t *data =
-          asio::buffer_cast<const uint8_t *>(receive_buffer.data());
-      for (size_t i = 0; i < BUFSIZE; i++) {
-        printf("%d ", data[i]);
-      }
-      int x_l = data[X_L];
-      int x_h = data[X_H];
-      int y_l = data[Y_L];
-      int y_h = data[Y_H];
-      int wheel_l = data[WHEEL_L];
-      int wheel_h = data[WHEEL_H];
-      uint8_t b = data[BUTTON];
-      {
-        std::lock_guard<std::mutex> lock(mtx);
-        clicked = (((b & (0b1 << 0)) >> 0) == 1);
-        mouse_writer.clickLeft(((b & (0b1 << 0)) >> 0) == 1);
-        mouse_writer.clickRight(((b & (0b1 << 1)) >> 1) == 1);
-        mouse_writer.clickMiddle(((b & (0b1 << 2)) >> 2) == 1);
-        mouse_writer.clickSide(((b & (0b1 << 3)) >> 3) == 1);
-        mouse_writer.clickExtra(((b & (0b1 << 4)) >> 4) == 1);
-        mouse_writer.xL(x_l);
-        mouse_writer.xH(x_h);
-        mouse_writer.yL(y_l);
-        mouse_writer.yH(y_h);
-        mouse_writer.wheelL(wheel_l);
-        mouse_writer.wheelH(wheel_h);
-        mouse_writer.mywrite();
-        mouse_writer.clearRelBuf();
-      }
-      printf("\n");
+    int x_l = data[X_L];
+    int x_h = data[X_H];
+    int y_l = data[Y_L];
+    int y_h = data[Y_H];
+    int wheel_l = data[WHEEL_L];
+    int wheel_h = data[WHEEL_H];
+    uint8_t b = data[BUTTON];
+    {
+      std::lock_guard<std::mutex> lock(mtx);
+      clicked = (((b & (0b1 << 0)) >> 0) == 1);
+      mouse_writer.clickLeft(((b & (0b1 << 0)) >> 0) == 1);
+      mouse_writer.clickRight(((b & (0b1 << 1)) >> 1) == 1);
+      mouse_writer.clickMiddle(((b & (0b1 << 2)) >> 2) == 1);
+      mouse_writer.clickSide(((b & (0b1 << 3)) >> 3) == 1);
+      mouse_writer.clickExtra(((b & (0b1 << 4)) >> 4) == 1);
+      mouse_writer.xL(x_l);
+      mouse_writer.xH(x_h);
+      mouse_writer.yL(y_l);
+      mouse_writer.yH(y_h);
+      mouse_writer.wheelL(wheel_l);
+      mouse_writer.wheelH(wheel_h);
+      mouse_writer.mywrite();
+      mouse_writer.clearRelBuf();
     }
+    printf("\n");
   }
   end = true;
   return 0;
