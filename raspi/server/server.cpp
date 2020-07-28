@@ -105,9 +105,6 @@ int main() {
   while (true) {
     // メッセージ受信
     uint8_t *data = communicator->read(BUFSIZE);
-    for (size_t i = 0; i < BUFSIZE; i++) {
-      printf("%d ", data[i]);
-    }
     int x_l = data[X_L];
     int x_h = data[X_H];
     int y_l = data[Y_L];
