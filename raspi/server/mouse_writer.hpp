@@ -38,7 +38,7 @@ public:
       rest -= write_size;
     }
     if (rest != 0) {
-      fprintf(stderr, "[MouseWriter] can't write: write_size: %ld\n",
+      fprintf(stderr, "[MouseWriter] can't write: write_size: %zu\n",
               BUFSIZE - rest);
       return;
     } else {
