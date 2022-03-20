@@ -1,2 +1,4 @@
 SUBSYSTEM=="usb", ATTRS{idVendor}=="093a", ATTRS{idProduct}=="2521", SYMLINK+="mymouse"
 SUBSYSTEM=="input", ATTRS{idVendor}=="093a", ATTRS{idProduct}=="2521", SYMLINK+="input/myevent"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="248a", ATTRS{idProduct}=="8514", SYMLINK+="mymouse"
+SUBSYSTEM=="input", ATTRS{idVendor}=="248a", ATTRS{idProduct}=="8514", SYMLINK+="input/myevent"

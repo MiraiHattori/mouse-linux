@@ -16,7 +16,7 @@ public:
     if (signal(SIGINT, sigint_handler) == SIG_ERR) {
       printf("signal\n");
     }
-    m_mouse_fd_in = open("/dev/input/myevent", O_RDONLY);
+    m_mouse_fd_in = open("/dev/input/event0", O_RDONLY);
     if (m_mouse_fd_in < 0) {
       fprintf(stderr, "can't open mouse device\n");
       exit(0);
@@ -39,6 +39,7 @@ public:
   static bool myread() {
     struct input_event mouse;
     if (read(m_mouse_fd_in, &mouse, sizeof(struct input_event)) < 0) {
+      fprintf(stderr, "[MouseReader] can't read mouse event");
       return false;
     }
     if (mouse.type == EV_SYN) {
@@ -95,6 +96,11 @@ public:
       // extra click code 0x90005 / 0d589829
       // unused
     }
+    printf("[MouseReader] ");
+    for (size_t i = 0; i < BUFSIZE; i++) {
+      printf("%d ", m_buf[i]);
+    }
+    printf("\n");
     return false;
   }
   static void sigint_handler(int /* signo */) {
