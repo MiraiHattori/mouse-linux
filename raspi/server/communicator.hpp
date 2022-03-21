@@ -60,7 +60,7 @@ public:
       : Communicator(),
         m_serial(asio::serial_port(m_io_service, "/dev/ttyAMA0")) {}
   void connect() override {
-    m_serial.set_option(asio::serial_port_base::baud_rate(115200));
+    m_serial.set_option(asio::serial_port_base::baud_rate(921600));
     m_serial.set_option(asio::serial_port_base::character_size(8));
     m_serial.set_option(asio::serial_port_base::flow_control(
         asio::serial_port_base::flow_control::none));
