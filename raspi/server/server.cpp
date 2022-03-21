@@ -103,7 +103,6 @@ int main() {
   modify_thread.detach();
 
   while (true) {
-    // メッセージ受信
     uint8_t *data = communicator->read(BUFSIZE);
     int x_l = data[X_L];
     int x_h = data[X_H];
@@ -130,6 +129,7 @@ int main() {
       mouse_writer.clearRelBuf();
     }
   }
+  // TODO (future731) デストラクタでjoinする
   end = true;
   return 0;
 }
