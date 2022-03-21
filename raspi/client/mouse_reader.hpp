@@ -39,14 +39,14 @@ public:
   static bool myread() {
     struct input_event mouse;
     if (read(m_mouse_fd_in, &mouse, sizeof(struct input_event)) < 0) {
-      fprintf(stderr, "[MouseReader] can't read mouse event");
+      fprintf(stderr, "[MouseReader] can't read mouse event\n");
       return false;
     }
     printf("[MouseReader] ");
     if (mouse.type == EV_SYN) {
       printf("EV_SYN ");
       printf("\n");
-      return false;
+      return true;
     }
     if (mouse.type == EV_KEY) {
       printf("EV_KEY ");
@@ -108,7 +108,7 @@ public:
       printf("%d ", m_buf[i]);
     }
     printf("\n");
-    return true;
+    return false;
   }
   static void sigint_handler(int /* signo */) {
     printf("\nSIGINT\n");
