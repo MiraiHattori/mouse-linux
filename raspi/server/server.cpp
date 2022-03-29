@@ -99,8 +99,8 @@ int main() {
   communicator->connect();
   mouse_writer.initialize();
   mouse_writer.clearBuf();
-  std::thread modify_thread(modifyThread);
-  modify_thread.detach();
+  // std::thread modify_thread(modifyThread);
+  // modify_thread.detach();
 
   while (true) {
     uint8_t *data = communicator->read(BUFSIZE);

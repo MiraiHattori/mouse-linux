@@ -74,16 +74,16 @@ public:
   uint8_t *read(size_t bufsize) override {
     boost::system::error_code ec;
     size_t rest = bufsize;
-    std::cout << "[UartCommunicator] ";
+    // std::cout << "[UartCommunicator] ";
     while (rest > 0) {
       size_t read_size =
           m_serial.read_some(asio::buffer(m_buf + bufsize - rest, bufsize), ec);
       rest -= read_size;
       for (size_t i = 0; i < read_size; i++) {
-        std::cout << +m_buf[i] << " ";
+        // std::cout << +m_buf[i] << " ";
       }
     }
-    std::cout << std::endl;
+    // std::cout << std::endl;
     if (rest != 0) {
       std::cerr << "read failed: read_size " << bufsize - rest << " bytes"
                 << std::endl;

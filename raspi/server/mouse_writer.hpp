@@ -15,7 +15,7 @@ public:
   explicit MouseWriter() = default;
   static void initialize() {
     if (signal(SIGINT, sigint_handler) == SIG_ERR) {
-      printf("signal\n");
+      //printf("signal\n");
     }
 
     m_mouse_fd_out = open("/dev/hidg0", O_RDWR);
@@ -25,7 +25,7 @@ public:
     }
   }
   static void sigint_handler(int /* signo */) {
-    printf("\nSIGINT\n");
+    //printf("\nSIGINT\n");
     finalize();
     exit(0);
   }
@@ -42,11 +42,11 @@ public:
               BUFSIZE - rest);
       return;
     } else {
-      printf("[MouseWriter] ");
+      //printf("[MouseWriter] ");
       for (size_t i = 0; i < BUFSIZE; i++) {
-        printf("%d ", m_buf[i]);
+        //printf("%d ", m_buf[i]);
       }
-      printf("\n");
+      //printf("\n");
     }
   }
   void clearBuf() { std::fill(m_buf, m_buf + BUFSIZE, 0); }
