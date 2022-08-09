@@ -14,7 +14,7 @@ public:
   explicit MouseReader() = default;
   static void initialize() {
     if (signal(SIGINT, sigint_handler) == SIG_ERR) {
-      printf("signal\n");
+      //printf("signal\n");
     }
     m_mouse_fd_in = open("/dev/input/event0", O_RDONLY);
     if (m_mouse_fd_in < 0) {
@@ -42,14 +42,14 @@ public:
       fprintf(stderr, "[MouseReader] can't read mouse event\n");
       return false;
     }
-    printf("[MouseReader] ");
+    //printf("[MouseReader] ");
     if (mouse.type == EV_SYN) {
-      printf("EV_SYN ");
-      printf("\n");
+      //printf("EV_SYN ");
+      //printf("\n");
       return true;
     }
     if (mouse.type == EV_KEY) {
-      printf("EV_KEY ");
+      //printf("EV_KEY ");
       if (mouse.code == BTN_LEFT) {
         if (mouse.value == 0) {
           m_buf[BUTTON] &= (0xff - (0b1 << 0));
@@ -82,7 +82,7 @@ public:
         }
       }
     } else if (mouse.type == EV_REL) {
-      printf("EV_REL ");
+      //printf("EV_REL ");
       if (mouse.code == REL_WHEEL) {
         m_buf[WHEEL_L] = (mouse.value >> 0) & 0xff;
         m_buf[WHEEL_H] = (mouse.value >> 8) & 0xff;
@@ -94,7 +94,7 @@ public:
         m_buf[Y_H] = (mouse.value >> 8) & 0xff;
       }
     } else if (mouse.type == EV_MSC) {
-      printf("EV_MSC ");
+      //printf("EV_MSC ");
       // left click code 0x90001 / 0d589825
       // right click code 0x90002 / 0d589826
       // middle click code 0x90003 / 0d589827
@@ -102,16 +102,16 @@ public:
       // extra click code 0x90005 / 0d589829
       // unused
     } else {
-      printf("EV_NOTUSED ");
+      //printf("EV_NOTUSED ");
     }
     for (size_t i = 0; i < BUFSIZE; i++) {
-      printf("%d ", m_buf[i]);
+      //printf("%d ", m_buf[i]);
     }
-    printf("\n");
+    //printf("\n");
     return false;
   }
   static void sigint_handler(int /* signo */) {
-    printf("\nSIGINT\n");
+    //printf("\nSIGINT\n");
     finalize();
     exit(0);
   }
